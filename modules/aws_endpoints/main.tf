@@ -1,3 +1,4 @@
+data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 locals {
@@ -5,127 +6,122 @@ locals {
   region = data.aws_region.current.name
 }
 
-data "terraform_remote_state" "hostedzone" {
-  backend = "s3"
-  config = {
-    bucket = "${local.prefix}-state" # TODO - work with a prefix-project bucket name
-    key    = "hostedzone/terraform.tfstate"
-    region = local.region
-  }
-}
-
-resource "aws_lb" "this" {
-  name               = "${var.name}-alb-${var.stage}"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [module.ecs_alb_sg.id]
-  subnets            = var.public_subnet_ids
-
-  enable_deletion_protection = false
-
+resource "aws_vpc_endpoint" "ecr-dkr-endpoint" {
+  vpc_id              = var.vpc_id
+  private_dns_enabled = true
+  service_name        = "com.amazonaws.${local.region}.ecr.dkr"
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [module.vpce_sg.id]
+  subnet_ids          = var.private_subnet_ids
   tags = {
-    Name        = "${var.name}-alb-${var.stage}"
-    Environment = var.stage
+    "Name" = "${local.prefix}-vpce-ecr.dkr"
   }
 }
-# ALB is deployed
-resource "aws_alb_target_group" "this" {
-  name        = "${var.name}-tg-${var.stage}"
-  port        = 80
-  protocol    = "HTTP"
-  vpc_id      = var.vpc_id
-  target_type = "ip"
 
-  health_check {
-    healthy_threshold   = "3"
-    interval            = "30"
-    protocol            = "HTTP"
-    matcher             = "200"
-    timeout             = "3"
-    path                = "/"
-    unhealthy_threshold = "2"
-  }
-
+resource "aws_vpc_endpoint" "ecr-api-endpoint" {
+  vpc_id              = var.vpc_id
+  service_name        = "com.amazonaws.${local.region}.ecr.api"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  security_group_ids  = [module.vpce_sg.id]
+  subnet_ids          = var.private_subnet_ids
   tags = {
-    Name        = "${var.name}-tg-${var.stage}"
-    Environment = var.stage
-  }
-
-  depends_on = [aws_lb.this]
-}
-
-resource "aws_alb_listener" "http" {
-  load_balancer_arn = aws_lb.this.arn
-  port              = 80
-  protocol          = "HTTP"
-
-  default_action {
-    type = "redirect"
-
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
+    "Name" = "${local.prefix}-vpce-ecr.api"
   }
 }
 
-resource "aws_alb_listener" "https" {
-  load_balancer_arn = aws_lb.this.arn
-  port              = 443
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = var.certificate_arn
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_alb_target_group.this.arn
+resource "aws_vpc_endpoint" "ecs-agent" {
+  vpc_id              = var.vpc_id
+  service_name        = "com.amazonaws.${local.region}.ecs-agent"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  security_group_ids  = [module.vpce_sg.id]
+  subnet_ids          = var.private_subnet_ids
+  tags = {
+    "Name" = "${local.prefix}-vpce-ecs-agent"
   }
 }
 
-module "ecs_alb_sg" {
+resource "aws_vpc_endpoint" "ecs-telemetry" {
+  vpc_id              = var.vpc_id
+  service_name        = "com.amazonaws.${local.region}.ecs-telemetry"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  security_group_ids  = [module.vpce_sg.id]
+  subnet_ids          = var.private_subnet_ids
+  tags = {
+    "Name" = "${local.prefix}-vpce-ecs-telemetry"
+  }
+}
+
+resource "aws_vpc_endpoint" "ecs" {
+  vpc_id              = var.vpc_id
+  service_name        = "com.amazonaws.${local.region}.ecs"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  security_group_ids  = [module.vpce_sg.id]
+  subnet_ids          = var.private_subnet_ids
+  tags = {
+    "Name" = "${local.prefix}-vpce-ecs"
+  }
+
+}
+
+
+module "vpce_sg" {
   source     = "cloudposse/security-group/aws"
   version    = "2.0.0-rc1"
-  attributes = ["ecs-alb"]
+  attributes = ["vpce-sg"]
 
   # Allow unlimited egress
   allow_all_egress = true
 
-  rules = [
+  rule_matrix = [
+    # Allow any of these security groups
     {
-      key         = "HTTP"
-      type        = "ingress"
-      from_port   = 80
-      to_port     = 80
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-      self        = null
-      description = "Allow HTTP from everywhere"
-    },
-    {
-      key         = "HTTPS"
-      type        = "ingress"
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-      self        = null
-      description = "Allow HTTPS from everywhere"
+      source_security_group_ids = [var.ecs_sg_id]
+      self                      = null
+      rules = [
+        {
+          key         = "HTTPS"
+          type        = "ingress"
+          from_port   = 443
+          to_port     = 443
+          protocol    = "tcp"
+          description = "Allow HTTPS from Task SG"
+        }
+      ]
     }
   ]
 
   vpc_id = var.vpc_id
 }
 
-# Adding Alias record to the hosted zone to point to the ALB
-resource "aws_route53_record" "alias_route53_record" {
-  zone_id = data.terraform_remote_state.hostedzone.outputs.zone_id
-  name    = "${var.stage}.${var.domain_name}"
-  type    = "A"
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id            = var.vpc_id
+  service_name      = "com.amazonaws.${local.region}.s3"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids   = var.private_route_table_ids
+  policy            = data.aws_iam_policy_document.s3_ecr_access.json
+  tags = {
+    "Name" = "${local.prefix}-vpce-S3"
+  }
 
-  alias {
-    name                   = aws_lb.this.dns_name
-    zone_id                = aws_lb.this.zone_id
-    evaluate_target_health = true
+}
+
+data "aws_iam_policy_document" "s3_ecr_access" {
+  statement {
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    actions = [
+      "s3:GetObject"
+    ]
+
+    resources = [
+      "arn:aws:s3:::prod-${local.region}-starport-layer-bucket/*",
+    ]
   }
 }

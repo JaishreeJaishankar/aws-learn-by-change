@@ -6,24 +6,31 @@ variable "stage" {
 variable "namespace" {
   type        = string
   description = "Project name"
-  default     = "week4"
+  default     = "web-app"
 }
 
 variable "name" {
   type        = string
-  description = "No idea what name is for"
+  description = "What is this web app???"
   default     = "todo-app"
 }
 
-variable "public_subnet_ids" {
+variable "private_subnet_ids" {
   type        = list(string)
-  description = "List of public subnet IDs"
+  description = "List of private subnet IDs"
   default     = []
 }
 
-variable "certificate_arn" {
-  type        = string
-  description = "ARN of the ACM certificate"
+variable "interface_endpoints" {
+  type        = list(string)
+  description = "List of ECR endpoints"
+  default     = ["ecr.dkr", "ecr.api", "ecs-agent", "ecs-telemetry", "ecs"]
+}
+
+variable "private_route_table_ids" {
+  type        = list(string)
+  description = "List of route tables associated with private subnets"
+  default     = []
 }
 
 variable "vpc_id" {
@@ -31,7 +38,7 @@ variable "vpc_id" {
   description = "VPC Id"
 }
 
-variable "domain_name" {
+variable "ecs_sg_id" {
   type        = string
-  description = "DNS name you own"
+  description = "Security Group ID of ECS service"
 }
