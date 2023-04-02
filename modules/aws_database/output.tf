@@ -1,9 +1,9 @@
-output "alb_target_group_arn" {
-  description = "ALB Target group ARN"
-  value       = aws_alb_target_group.this.arn
-}
-
-output "alb_sg_id" {
-  description = "Security Group ID of ALB"
-  value       = module.ecs_alb_sg.id
+output "db_settings" {
+  value = tomap({
+    "port"     = tostring(aws_db_instance.this.port),
+    "hostname" = aws_db_instance.this.address,
+    "dbname"   = aws_db_instance.this.db_name,
+    "username" = aws_db_instance.this.username,
+    "pwd_arn"  = aws_secretsmanager_secret.this.arn
+  })
 }

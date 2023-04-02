@@ -3,35 +3,25 @@ variable "stage" {
   description = "Deployment stage, e.g. dev, test, prod"
   default     = "dev"
 }
+
 variable "namespace" {
   type        = string
   description = "Project name"
-  default     = "week4"
+  default     = "web-app"
 }
 
 variable "name" {
   type        = string
-  description = "No idea what name is for"
+  description = "What is this web app???"
   default     = "todo-app"
-}
-
-variable "public_subnet_ids" {
-  type        = list(string)
-  description = "List of public subnet IDs"
-  default     = []
-}
-
-variable "certificate_arn" {
-  type        = string
-  description = "ARN of the ACM certificate"
 }
 
 variable "vpc_id" {
   type        = string
-  description = "VPC Id"
+  description = "VPC ID"
 }
 
-variable "domain_name" {
+variable "alb_sg_id" {
   type        = string
-  description = "DNS name you own"
+  description = "ALB Security Group ID"
 }

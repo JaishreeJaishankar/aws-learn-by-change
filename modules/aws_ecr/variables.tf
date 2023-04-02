@@ -3,6 +3,7 @@ variable "stage" {
   description = "Deployment stage, e.g. dev, test, prod"
   default     = "dev"
 }
+
 variable "namespace" {
   type        = string
   description = "Project name"

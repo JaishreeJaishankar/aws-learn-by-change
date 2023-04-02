@@ -3,15 +3,16 @@ variable "stage" {
   description = "Deployment stage, e.g. dev, test, prod"
   default     = "dev"
 }
+
 variable "namespace" {
   type        = string
   description = "Project name"
-  default     = "week4"
+  default     = "web-app"
 }
 
 variable "name" {
   type        = string
-  description = "No idea what name is for"
+  description = "What is this web app???"
   default     = "todo-app"
 }
 

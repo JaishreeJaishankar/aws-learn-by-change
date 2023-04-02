@@ -1,9 +1,9 @@
-output "alb_target_group_arn" {
-  description = "ALB Target group ARN"
-  value       = aws_alb_target_group.this.arn
+output "ecs_id" {
+  description = "The ID of the ECS cluster"
+  value       = aws_ecs_cluster.this.id
 }
 
-output "alb_sg_id" {
-  description = "Security Group ID of ALB"
-  value       = module.ecs_alb_sg.id
+output "ecs_sg_id" {
+  description = "ECS Service Security Group ID"
+  value       = module.ecs_service_sg.id
 }
