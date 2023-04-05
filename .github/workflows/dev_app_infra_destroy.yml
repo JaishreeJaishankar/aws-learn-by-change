@@ -9,8 +9,7 @@ on:
     - infrastructure/environments/dev/web_app_infrastructure/**
     inputs:
       approver:
-        description: 'Terraform Destroy approver'     
-        required: true
+        description: 'Terraform Destroy approver'
         default: 'jaishreej'
 
 permissions:
