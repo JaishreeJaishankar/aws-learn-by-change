@@ -1,4 +1,3 @@
-
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 data "aws_iam_role" "labrole" {
@@ -26,7 +25,7 @@ resource "aws_ecs_task_definition" "this" {
   family                   = "${local.prefix}-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "512"
+  cpu                      = "1024"
   memory                   = "1024"
   execution_role_arn       = local.lab_role_arn
   task_role_arn            = local.lab_role_arn
