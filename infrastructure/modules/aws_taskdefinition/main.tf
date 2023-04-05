@@ -25,8 +25,8 @@ resource "aws_ecs_task_definition" "this" {
   family                   = "${local.prefix}-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "256"
-  memory                   = "512"
+  cpu                      = "512"
+  memory                   = "1024"
   execution_role_arn       = local.lab_role_arn
   task_role_arn            = local.lab_role_arn
   container_definitions = jsonencode([{
