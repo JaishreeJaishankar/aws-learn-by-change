@@ -31,22 +31,22 @@ on:
     - prod
     - dev
     paths: 
-    - /web_application/**
+    - /application/**
   push:
     branches:
     - prod
     - dev
     paths:
-    - /web_application/**
+    - /application/**
 
   pull_request:
     branches:
     - prod
     paths: 
-    - /web_application/**
+    - /application/**
 
   workflow_run:
-    workflows: ["Web App Infra Deployment - Dev"]
+    workflows: ["Web App Deployment - Dev"]
     types:
       - completed
 env:
@@ -57,7 +57,7 @@ env:
   ECS_TASK_DEFINITION: task-definition.json                                             
   CONTAINER_NAME:  container                                                        
   AWS_REGION: us-east-1
-  WORKING_DIR: ./web_application/services/api
+  WORKING_DIR: ./application/services/api
 
 permissions:
   contents: read
