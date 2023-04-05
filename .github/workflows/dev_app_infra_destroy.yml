@@ -52,12 +52,6 @@ jobs:
         run: terraform plan -input=false -no-color -destroy
         continue-on-error: true
 
-      - name: Manual Approval
-        uses: trstringer/manual-approval@v1
-        with:
-          secret: ${{ github.TOKEN }}
-          approvers: ${{ github.event.inputs.approver }}
-
       - name: Terraform Destroy
         id: destroy
         run: terraform destroy -input=false --auto-approve
