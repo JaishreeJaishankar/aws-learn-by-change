@@ -103,7 +103,6 @@ jobs:
 
     - name: Generate task definition JSON
       id: task-generate
-      # if: (github.ref == 'refs/heads/master' && github.event_name == 'push') || ${{ github.event.workflow_run.conclusion == 'success' }}
       run: |
         aws ecs describe-task-definition --task-definition ${PREFIX}-task --region us-east-1 --query taskDefinition > $ECS_TASK_DEFINITION
 
