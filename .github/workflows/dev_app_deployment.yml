@@ -31,19 +31,19 @@ on:
     - prod
     - dev
     paths: 
-    - /application/**
+    - /web_application/**
   push:
     branches:
     - prod
     - dev
     paths:
-    - /application/**
+    - /web_application/**
 
   pull_request:
     branches:
     - prod
     paths: 
-    - /application/**
+    - /web_application/**
 
   workflow_run:
     workflows: ["Web App Infra Deployment - Dev"]
@@ -57,7 +57,7 @@ env:
   ECS_TASK_DEFINITION: task-definition.json                                             
   CONTAINER_NAME:  container                                                        
   AWS_REGION: us-east-1
-  WORKING_DIR: ./application/services/api
+  WORKING_DIR: ./web_application/services/api
 
 permissions:
   contents: read
