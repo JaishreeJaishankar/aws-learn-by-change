@@ -1,25 +1,27 @@
-name: Week 4 App Infra Deployment - Dev
+name: Web App Infra Deployment - Dev
 # https://gaunacode.com/deploying-terraform-at-scale-with-github-actions
 on:
   workflow_dispatch:
     branches:
-    - master
+    - prod
+    - dev
     paths: 
-    - 04_week/environments/dev/app_specific/**
+    - infrastructure/environments/dev/web_app_infrastructure/**
   push:
     branches:
-    - master
+    - prod
+    - dev
     paths:
-    - 04_week/environments/dev/app_specific/**
+    - infrastructure/environments/dev/web_app_infrastructure/**
 
   pull_request:
     branches:
-    - master
+    - prod
     paths: 
-    - 04_week/environments/dev/app_specific/**
+    - infrastructure/environments/dev/web_app_infrastructure/**
   
   workflow_run:
-    workflows: ["Week 4 Core Infra Deployment - Dev"]
+    workflows: ["Web App Core Infra Deployment - Dev"]
     types:
       - completed
 

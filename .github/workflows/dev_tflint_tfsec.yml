@@ -11,15 +11,15 @@ on:
     - prod
     - dev
     paths: 
-    - Infrastructure/**
+    - infrastructure/**
   push:
     branches: [ "dev"]
     paths: 
-    - Infrastructure/**
+    - infrastructure/**
   pull_request:
     branches: [ "prod" ]
     paths: 
-    - Infrastructure/**
+    - infrastructure/**
 
 jobs:
   tfsec_tflint_dev:
@@ -30,7 +30,7 @@ jobs:
       contents: read
       security-events: write
     env:
-      WORKING_DIR: ./Infrastructure
+      WORKING_DIR: ./infrastructure
       
     defaults:
       run:

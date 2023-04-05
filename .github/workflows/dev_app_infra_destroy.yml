@@ -1,16 +1,17 @@
-name: Week 4 App Infra Destroy - Dev
+name: Web App Infra Destroy - Dev
 # https://gaunacode.com/deploying-terraform-at-scale-with-github-actions
 on:
   workflow_dispatch:
     branches:
-    - master
+    - prod
+    - dev
     paths: 
-    - 04_week/environments/dev/app_specific/**
+    - infrastructure/environments/dev/web_app_infrastructure/**
     inputs:
       approver:
         description: 'Terraform Destroy approver'     
         required: true
-        default: 'igeiman13'
+        default: 'jaishreej'
 
 permissions:
   contents: read
@@ -27,7 +28,7 @@ jobs:
       AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_SESSION_TOKEN:  ${{ secrets.AWS_SESSION_TOKEN }}
-      WORKING_DIR: ./04_week/environments/dev/app_specific
+      WORKING_DIR: ./infrastructure/environments/dev/web_app_infrastructure/
   
     defaults:
       run:

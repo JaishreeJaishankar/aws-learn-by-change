@@ -1,16 +1,17 @@
-name: Week 4 Core Infra Destroy - Dev
+name: Web App Core Infra Destroy - Dev
 # https://gaunacode.com/deploying-terraform-at-scale-with-github-actions
 on:
   workflow_dispatch:
     branches:
-    - master
+    - prod
+    - dev
     paths: 
-    - 04_week/environments/dev/core/**
+    - infrastructure/environments/dev/core_infrastructure/**
     inputs:
       approver:
         description: 'Terraform Destroy approver'     
         required: true
-        default: 'igeiman13'
+        default: 'jaishreej'
 
 permissions:
   contents: read
