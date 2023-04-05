@@ -46,7 +46,7 @@ on:
     - /application/**
 
   workflow_run:
-    workflows: ["Web App Deployment - Dev"]
+    workflows: ["Web App Code Deployment - Dev"]
     types:
       - completed
 env:
