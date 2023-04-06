@@ -39,6 +39,7 @@ resource "aws_ecs_task_definition" "this" {
       { "name" : "RDS_HOSTNAME", "value" : data.terraform_remote_state.this.outputs.db_settings.hostname },
       { "name" : "RDS_DBNAME", "value" : data.terraform_remote_state.this.outputs.db_settings.dbname },
       { "name" : "RDS_USERNAME", "value" : data.terraform_remote_state.this.outputs.db_settings.username },
+      { "name" : "APP_COLOR", "value" : "pink"},
     ]
     secrets : [
       {

@@ -10,7 +10,7 @@ DBHOST = os.environ.get("RDS_HOSTNAME") or "localhost"
 DBUSER = os.environ.get("RDS_USERNAME") or "root"
 DBPWD = os.environ.get("RDS_PASSWORD") or "password"
 DATABASE = os.environ.get("RDS_DBNAME") or "employees"
-COLOR_FROM_ENV = "lime"
+COLOR_FROM_ENV = os.environ.get('APP_COLOR') or "lime"
 DBPORT = int(os.environ.get("RDS_PORT"))
 
 # Create a connection to the MySQL database
