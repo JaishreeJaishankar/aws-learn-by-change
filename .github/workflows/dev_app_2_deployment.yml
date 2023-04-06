@@ -25,7 +25,7 @@ on:
       - completed
     
 env:
-  APPLICATION_ECR_PREFIX:  web-app-dev-todo-app
+  PREFIX:  web-app-dev-todo-app
   ECR_REPOSITORY:  repo
   ECS_SERVICE:   service                
   ECS_CLUSTER:   cluster               
